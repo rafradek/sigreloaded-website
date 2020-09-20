@@ -1,0 +1,19 @@
+body {
+    padding-top: 5rem;
+  }
+  .main-body-top {
+    padding: 3rem 1.5rem;
+    text-align: center;
+  }
+  .main-body {
+    padding: 0rem 1.5rem;
+    text-align: center;
+  }
+.serv-label
+{
+  text-align: left;
+}
+.serv-value
+{
+  float: right;
+}

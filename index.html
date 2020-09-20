@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Sigsegv-MVM modded server</title>
+    
+    <link href="style.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <!--<a class="navbar-brand" href="#">Navbar</a>-->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="demos.html">Demos</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="upload.html">Upload</a>
+            </li>
+            <!--<li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+              <div class="dropdown-menu" aria-labelledby="dropdown01">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+          </form>-->
+        </div>
+      </nav>
+      
+      <main role="main" class="container">
+      
+        <div class="main-body-top">
+          <h1>Sigsegv-MVM modded servers</h1>
+          <p class="lead">MVM servers aimed at content creators<br>Upload your own missions to play with friends</p>
+          
+          <h2>Servers</h2>
+        </div>
+        <div class="card-deck mb-3 text-center mx-auto" style="width: 42rem;" id="serverDeck">
+            <!--<div class="card mb-4 shadow-sm">
+              <div class="card-header">
+                <h4 class="my-0 font-weight-normal"><img src="euflag.png" style="height: 2rem;">EU</h4>
+              </div>
+              <div class="card-body">
+                <ul class="list-unstyled mt-3 mb-4">
+                  <li>sigreloaded.ddns.net:27015</li>
+                  <li class="serv-label">Map:<span class="serv-value">mvm_decoy</span></li>
+                  <li class="serv-label">Mission:<span class="serv-value">intermediate</span></li>
+                  <li class="serv-label">Players:<span class="serv-value text-success">(0/6)</span></li>
+                </ul>
+                <button type="button" class="btn btn-lg btn-block btn-outline-primary">Connect</button>
+              </div>
+            </div>-->
+        </div>
+        <div class="main-body">
+          <h2>Uploading content</h2>
+          <p class="lead">Upload maps and missions using a web interface or in-game command<br>Mission makers are given special privileges</p>
+          <a type="button" class="btn btn-lg btn-block btn-outline-primary mx-auto" style="width: 21rem;" href="upload.html">Upload now</a>
+
+          <h2 style="margin-top: 3rem;">Expand mission capabilities</h2>
+          <p class="lead">Population files get extra functionality<br>Download the feature demo popfile to get started</p>
+          <a type="button" class="btn btn-lg btn-block btn-outline-primary mx-auto" style="width: 21rem;" href="mvm_bigrock_sigdemo.pop">Download popfile demo</a>
+        </div>
+      </main><!-- /.container -->
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script>
+      setInterval(function(){
+        getServers();
+
+      }, 45000);
+
+      $(document).ready(function () {
+        getServers();
+
+      });
+      function getServers() {
+        let requestURL = '/serverlist.php';
+        let request = new XMLHttpRequest();
+        request.open('GET', requestURL);
+        request.responseType = 'json';
+        request.onload = function() {
+          const servers = request.response;
+          populateServers(servers);
+        }
+        request.send();
+      }
+      function populateServers(jsonObj) {
+        let serverDeck = document.getElementById("serverDeck");
+        serverDeck.innerHTML = "";
+        for (let i = 0; i < jsonObj.length; i++){
+          let time = Math.floor(Date.now() / 1000);
+          let servobj = jsonObj[i];
+          if (time > servobj.update_time+150)
+            continue;
+          if (servobj.mission == "pop")
+            servobj.mission = "normal";
+          let maxplayers= servobj.max_players+servobj.players_blu;
+          let players=servobj.players_red+servobj.players_blu;
+          //address, players_red, players_blu, connecting_players, max_players, wave, max_wave, mission, map
+          let flagFile = "euflag.png";
+          let regionName = "EU";
+          if (servobj.server_name.indexOf("[US]") != -1){
+            flagFile = "usflag.png";
+            regionName = "US";
+          }
+          let tmpl = `
+          <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+              <h4 class="my-0 font-weight-normal"><img src=${flagFile} style="height: 2rem;">${regionName}</h4>
+            </div>
+            <div class="card-body">
+              <ul class="list-unstyled mt-3 mb-4">
+                <li>${servobj.address}</li>
+                <li class="serv-label">Map:<span class="serv-value">${servobj.map}</span></li>
+                <li class="serv-label">Mission:<span class="serv-value">${servobj.mission}</span></li>
+                <li class="serv-label">Players:<span class="serv-value ${maxplayers > players ? "text-success" : "text-danger"}">(${players}/${maxplayers})</span></li>
+              </ul>
+              <a type="button" class="btn btn-lg btn-block btn-outline-primary" href="steam://connect/${servobj.address}">Connect</a>
+            </div>
+          </div>
+          `;
+          serverDeck.innerHTML+=tmpl;
+        }
+        serverDeck.style.width = (21*jsonObj.length)+"rem";
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Sigsegv-MVM modded server</title>
+    
+    <link href="style.css" rel="stylesheet">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <!--<a class="navbar-brand" href="#">Navbar</a>-->
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="demos.html">Demos</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="#">Upload</a>
+            </li>
+            <li class="nav-item" id="loginInfo">
+
+            </li>
+            <!--<li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+              <div class="dropdown-menu" aria-labelledby="dropdown01">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>
+          </form>-->
+        </div>
+      </nav>
+      
+      <main role="main" class="container">
+      
+        <div class="main-body-top">
+          <h1>Content Uploader</h1>
+          <p class="lead">Upload files from your computer</p>
+          <form id="upload" enctype="multipart/form-data" method="POST" action="uploadfile.php">
+            <div class="form-row" >
+              <div class="custom-file" >
+                <input type="file" class="custom-file-input form-control-lg" id="fileUpload" name="fileUpload" accept=".pop,.bsp,.vtf,.vmt,.mp3,.wav,.txt,.nav,.res,.zip">
+                <label class="custom-file-label form-control-lg" for="fileUpload">Choose or drop files here</label>
+              </div>
+            </div>
+            <div class="form-row">
+              <p class="lead">Or upload from remote URL</p>
+            </div>
+            <div class="form-row">
+              <input class="form-control" type="text" placeholder="URL" id="urlUpload" name="urlUpload">
+            </div>
+            <div class="form-row">
+              <p class="mx-auto">Allowed files: pop, bsp, nav, vtf, vmt, mp3, wav, res, mvm_upgrades_*.txt, mdl, vvd, vtx, phy, zip archives</p>
+            </div>
+            <!--<div class="form-check form-check-inline" id="autofileuploaddiv" style="display:none;">
+              <input class="form-check-input" type="checkbox" id="autofileupload" value="autofileupload">
+              <label class="form-check-label" for="autofileupload">Automatically upload file changes</label>
+            </div>-->
+            <div class="form-row">
+              <p class="mx-auto">Max upload size: 100 MB</p>
+            </div>
+            
+              <button type="submit" class="btn btn-primary mb-2 mx-auto" style="display:none;" id="uploadButton">Upload</button>
+            <div class="form-row">
+              <p class="mx-auto" id="uploadProgress"></p>
+            </div>
+            
+          </form>
+          
+          <h2><a data-toggle="collapse" href="#collapseFileList" aria-expanded="true" aria-controls="collapseFileList">
+            Your files
+          </a></h2>
+        </div>
+        <div class="collapse" id="collapseFileList">
+          <p class="lead" id="fileInfo"></p>
+          <table class="table table-sm">
+            
+            <thead class="thead-dark">
+              <tr>
+                <th style="width: 60.00%" scope="col">File name</th>
+                <th style="width: 10.00%" scope="col">Type</th>
+                <th style="width: 10.00%" scope="col">Size</th>
+                <th style="width: 20.00%" scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="filesList">
+              
+              <!--<tr>
+                <th scope="row">map.bsp</th>
+                <td>Map</td>
+                <td>10 MB</td>
+                <td><button class="btn btn-primary mb-2">Delete</button></td>
+              </tr>-->
+            </tbody>
+          </table>
+        </div>
+        <div class="main-body">
+          <h2><a data-toggle="collapse" href="#collapseCommands" aria-expanded="true" aria-controls="collapseCommands">
+            Mission Commands
+          </a></h2>
+          
+        </div>
+        <div class="collapse" id="collapseCommands">
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th style="width: 30.00%" scope="col">Command</th>
+                <th style="width: 70.00%" scope="col">Description</th>
+              </tr>
+            </thead>
+            <tbody id="commsList">
+              <!--<tr>
+                <th scope="row">sm_wave_restart</th>
+                <td>Restarts the current wave</td>
+              </tr>-->
+            </tbody>
+          </table>
+        </div>
+      </main><!-- /.container -->
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->	
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js" ></script>
+    
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script>
+      var logininfo;
+      var timerupload;
+      $(document).ready(function () {
+        bsCustomFileInput.init()
+        getLoginButton();
+        document.getElementById('urlUpload').oninput = onUrlInput;
+        document.getElementById('fileUpload').onchange = onFileSelected;
+        document.getElementById('fileUpload').ondrop = onDropFile;
+        document.addEventListener('submit', e => {
+   
+          // Store reference to form to make later code easier to read
+          const form = e.target;
+          if(form.id == "upload") {
+            let progressel = document.getElementById("uploadProgress");
+            progressel.innerHTML="Uploading file...";
+            // Post data using the Fetch API
+            fetch(form.action, {
+              method: form.method,
+              body: new FormData(form)
+            }).then(res => res.text()).then(text => {
+              let change=text.replace(/E:/g,"<span class='text-danger'>");
+              change=change.replace(/S:/g,"<span class='text-success'>");
+              change=change.replace(/<br>/g,"</span><br>");
+
+              progressel.innerHTML=change;
+              getFileInfo();
+              getFiles();
+            });
+            // Prevent the default form submit
+            e.preventDefault();
+          }
+        });
+      })
+
+      function onUrlInput(e) {
+        if (e.target.value.length > 0)
+          document.getElementById('uploadButton').style.display="block";
+        else 
+          document.getElementById('uploadButton').style.display="none";
+      }
+
+      function onFileSelected(e) {
+        let files = e.target.files;
+
+        if (files.length > 0) {
+          window.clearTimeout(timerupload);
+          //document.getElementById('autofileuploaddiv').style.display="block";
+          document.getElementById('upload').dispatchEvent(new CustomEvent("submit", {"bubbles":true, "cancelable": true}));
+          //document.getElementById('autofileupload').checked = files[0].name.split('.').pop() == "pop";
+        }
+       // else
+        //  document.getElementById('autofileuploaddiv').style.display="none";
+        
+      }
+
+      function onDropFile(e) {
+        if (e.dataTransfer.files.length > 0) {
+          timerupload = window.setTimeout(() => {
+            document.getElementById('upload').dispatchEvent(new CustomEvent("submit", {"bubbles":true, "cancelable": true}));
+          },100);
+        }
+      }
+
+      function getFiles() {
+
+        let requestURL = '/filelist.php';
+
+        let request = new XMLHttpRequest();
+        request.open('GET', requestURL);
+        request.responseType = 'json';
+        request.onload = function() {
+          const files = request.response;
+          populateFiles(files);
+        }
+        request.send();
+        
+      }
+      function getCommands() {
+        let requestURL = '/commlist.php';
+        let request = new XMLHttpRequest();
+        request.open('GET', requestURL);
+        request.responseType = 'json';
+        request.onload = function() {
+          const  comms = request.response;
+          populateCommands(comms);
+        }
+        request.send();
+      }
+      function getFileInfo() {
+        let requestURL = '/fileinfo.php';
+        let request = new XMLHttpRequest();
+        request.open('GET', requestURL);
+        request.responseType = 'json';
+        request.onload = function() {
+          const  comms = request.response;
+          populateFileInfo(comms);
+        }
+        request.send();
+      }
+      function getLoginButton() {
+        let requestURL = '/logininfo.php';
+        let request = new XMLHttpRequest();
+        request.open('GET', requestURL);
+        request.responseType = 'json';
+        request.onload = function() {
+          logininfo=request.response;
+          populateLogin(logininfo);
+        }
+        request.send();
+      }
+      
+      function populateLogin(logininfo) {
+        let loginel = document.getElementById('loginInfo');
+        if (logininfo.sessteamid == null) {
+          window.location.href="login.php?login";
+        }
+        else {
+          loginel.innerHTML= "<a class='nav-link' style='margin:-3px 0px -3px -0px' href='login.php?logout'><img style='margin-right:3px' src = '"+logininfo.avatar+"'/>"+logininfo.personaname+"</a>";
+          getFileInfo();
+          getFiles();
+          getCommands();
+        }
+      }
+      function populateFileInfo(info) {
+        let infoel = document.getElementById('fileInfo');
+        infoel.textContent = "Storage used: "+getFileSizeString(info.filesize)+" / "+getFileSizeString(info.maxtotalfilesize)+". Total files: "+info.count;
+      }
+
+      function getFileSizeString(size) {
+        if (size < 1024) {
+          return size + " B";
+        }
+        else if (size < 1024 * 1024) {
+          return Math.floor(size / 1024) + " KB";
+        }
+        else {
+          return Math.floor(size / (1024 * 1024)) + " MB";
+        }
+      }
+
+      function populateFiles(jsonObj) { 
+        let table = document.getElementById("filesList");
+        table.innerHTML="";
+        if (jsonObj.length < 50){
+          $('#collapseFileList').collapse();
+        }
+        for (let i = 0; i < jsonObj.length; i++){
+          let fileobj = jsonObj[i];
+          let tr = document.createElement("tr");
+          let th = document.createElement("th");
+          let tdtype = document.createElement("td");
+          let tdaction = document.createElement("td");
+          let buttondelete = document.createElement("button");
+          let tdsize = document.createElement("td");
+
+          th.textContent = fileobj['name']+"."+fileobj['ext'];
+
+          let type="Unknown";
+          switch(fileobj['ext']) {
+          case "bsp": type="Map"; break;
+          case "pop": type="Mission"; break;
+          case "wav": type="Sound"; break;
+          case "mp3": type="Sound"; break;
+          case "txt": type="Upgrades"; break;
+          case "vtf": type="Icon"; break;
+          case "vmt": type="Icon"; break;
+          case "nav": type="Nav"; break;
+          }
+          tdtype.textContent = type;
+
+          let size = getFileSizeString(fileobj['size']);
+          tdsize.textContent = size;
+
+          
+          buttondelete.className= "btn btn-primary btn-sm";
+          buttondelete.deleteName= fileobj['name'];
+          buttondelete.deleteExt= fileobj['ext'];
+          buttondelete.textContent = "Delete";
+          buttondelete.addEventListener("click",ev => {
+            let requestURL = '/deletefile.php';
+            let request = new XMLHttpRequest();
+            request.open('POST', requestURL);
+            request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            request.responseType = 'json';
+            request.onload = function() {
+              if(request.response[0]){
+                table.removeChild(tr);
+                getFileInfo();
+              }
+            }
+            request.send("name="+fileobj['name']+"&ext="+fileobj['ext']);
+            tr.style.display="hidden";
+          });
+
+          table.appendChild(tr);
+          th.setAttribute("scope", "row");
+          tr.appendChild(th);
+          tr.appendChild(tdtype);
+          tr.appendChild(tdsize);
+          tr.appendChild(tdaction);
+          tdaction.appendChild(buttondelete);
+        }
+      }
+      function populateCommands(jsonObj) {
+        for (let i = 0; i < jsonObj.length; i++){
+          let commobj = jsonObj[i];
+          let tr = document.createElement("tr");
+          let th = document.createElement("th");
+          let td = document.createElement("td");
+
+          th.textContent = commobj['command'];
+          td.textContent = commobj['help'];
+
+          document.getElementById("commsList").appendChild(tr);
+          th.setAttribute("scope", "row");
+          tr.appendChild(th);
+          tr.appendChild(td);
+        }
+        $('#collapseCommands').collapse();
+      }
+    </script>
+  </body>
+</html>
