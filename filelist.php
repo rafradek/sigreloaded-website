@@ -4,6 +4,7 @@
     if (!isset($_SESSION['steamid'])){
         die();
     }
+    $ini = parse_ini_file("../config.ini");
 
     $steam_id_text = $_SESSION['steamid'];
     $steam_id = $steam_id_text & 0xFFFFFFFF;
@@ -33,15 +34,21 @@
     if (isset($_GET["other"])){
         $strings.="OR NOT extension IN ('bsp','nav','res','pop','vtf','vmt','wav','mp3')";
     }
-    $connection = mysqli_connect("localhost","sourcemod","potat","sourcemod") or die("Error " . mysqli_error($connection));
+    
+    try {
+        $db = new PDO($ini["db_connection"],$ini["db_username"],$ini["db_password"]); 
+    }  
+    catch (PDOException $e){
+        die();
+    } 
+    
     //AND ( $strings)
     $sql = "select name, extension as ext, filesize as size from file_ownership WHERE owner_steam_id = $steam_id LIMIT $min, $count";
-    $result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));
+    $result = $db->query($sql);
     $emparray = array();
-    while($row =mysqli_fetch_assoc($result))
+    while($row = $result->fetch(PDO::FETCH_ASSOC))
     {
         $emparray[] = $row;
     }
     echo json_encode($emparray);
-    mysqli_close($connection);
 ?>

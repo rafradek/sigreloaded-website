@@ -4,21 +4,29 @@
     if (!isset($_SESSION['steamid'])){
         die();
     }
+    $ini = parse_ini_file("../config.ini");
+
     $max_total_upload=1024*1024*1024;
     $max_filesize=1024*1024*100;
 
     $steam_id_text = $_SESSION['steamid'];
     $steam_id = $steam_id_text & 0xFFFFFFFF;
 
-    $connection = mysqli_connect("localhost","sourcemod","potat","sourcemod") or die("Error " . mysqli_error($connection));
+    
+    try {
+        $db = new PDO($ini["db_connection"],$ini["db_username"],$ini["db_password"]); 
+    }  
+    catch (PDOException $e){
+        die();
+    } 
+
     $sql = "select SUM(filesize) as filesize, COUNT(*) as count from file_ownership WHERE owner_steam_id = $steam_id";
-    $result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));
+    $result = $db->query($sql);
     $emparray = array();
-    $row =mysqli_fetch_assoc($result);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
     $emparray["filesize"] = $row["filesize"];
     $emparray["maxfilesize"] = $max_filesize;
     $emparray["count"] = $row["count"];
     $emparray["maxtotalfilesize"] = $max_total_upload;
     echo json_encode($emparray);
-    mysqli_close($connection);
 ?>

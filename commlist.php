@@ -1,15 +1,17 @@
 <?php
-    ini_set('display_errors', 1);
-    ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
-    $connection = mysqli_connect("localhost","sourcemod","potat","sourcemod") or die("Error " . mysqli_error($connection));
+    $ini = parse_ini_file("../config.ini");
+    try {
+        $db = new PDO($ini["db_connection"],$ini["db_username"],$ini["db_password"]); 
+    }  
+    catch (PDOException $e){
+        die();
+    } 
     $sql = "select command, help from commands";
-    $result = mysqli_query($connection, $sql) or die("Error in Selecting " . mysqli_error($connection));
+    $result = $db->query($sql);
     $emparray = array();
-    while($row =mysqli_fetch_assoc($result))
+    while($row = $result->fetch(PDO::FETCH_ASSOC))
     {
         $emparray[] = $row;
     }
     echo json_encode($emparray);
-    mysqli_close($connection);
 ?>

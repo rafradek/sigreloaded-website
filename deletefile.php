@@ -3,6 +3,8 @@
     if (!isset($_SESSION['steamid'])){
         die();
     }
+    
+    $ini = parse_ini_file("../config.ini");
 
     $target_dir = "tf/";
     
@@ -10,15 +12,15 @@
     $steam_id = $steam_id_text & 0xFFFFFFFF;
 
     try {
-        $mysql = new PDO("mysql:dbname=sourcemod;host=localhost","sourcemod","potat"); 
+        $db = new PDO($ini["db_connection"],$ini["db_username"],$ini["db_password"]); 
     }  
     catch (PDOException $e){
-        echo "Error ".$e->getMessage();
+        die();
     } 
     
-    $delete_query = $mysql->prepare("DELETE FROM file_ownership WHERE owner_steam_id = $steam_id AND name = ? AND extension = ?");
-    $get_query = $mysql->prepare("SELECT COUNT(*) FROM file_ownership WHERE owner_steam_id = $steam_id AND name = ? AND extension = ?");
-    $ext_info_query = $mysql->prepare("SELECT path, prefix FROM extension_info WHERE extension = ?");
+    $delete_query = $db->prepare("DELETE FROM file_ownership WHERE owner_steam_id = $steam_id AND name = ? AND extension = ?");
+    $get_query = $db->prepare("SELECT COUNT(*) FROM file_ownership WHERE owner_steam_id = $steam_id AND name = ? AND extension = ?");
+    $ext_info_query = $db->prepare("SELECT path, prefix FROM extension_info WHERE extension = ?");
     //$sql = "select name, extension as ext, filesize as size from file_ownership WHERE owner_steam_id = $steam_id";
     $get_query->bindParam(1,$_POST["name"],PDO::PARAM_STR);
     $get_query->bindParam(2,$_POST["ext"],PDO::PARAM_STR);

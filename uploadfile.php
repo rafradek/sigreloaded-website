@@ -24,6 +24,8 @@ $max_filesize=1024*1024*100;
 $max_upload_rate=1024*1024*8;
 $max_file_count=10000;
 
+$ini = parse_ini_file("../config.ini");
+
 $GOOGLE_DRIVE_URL = "https://drive.google.com/open?id=";
 $GOOGLE_DRIVE_URL_ALT = "https://drive.google.com/file/d/";
 $GOOGLE_DRIVE_URL_ALT2 = "https://drive.google.com/u/0/uc?id=";
@@ -33,7 +35,7 @@ $GOOGLE_DRIVE_ALT2_NUMCHAR = strlen($GOOGLE_DRIVE_URL_ALT2);
 
 $GOOGLE_DRIVE_FORMAT = "https://www.googleapis.com/drive/v2/files/%s?key=%s";
 $GOOGLE_DRIVE_FORMAT_DOWNLOAD = "&alt=media&source=downloadUrl";
-$GOOGLE_DRIVE_API_KEY = "AIzaSyCo1iFFDxaGQuqM3ChHb0q6MRUHGQq1PwQ";
+$GOOGLE_DRIVE_API_KEY = $ini["api_google"];
 
 $DROPBOX_URL = "https://www.dropbox.com/sh/";
 $DROPBOX_NUMCHAR = strlen($DROPBOX_URL);
@@ -45,23 +47,23 @@ $target_dir = "tf";
 $target_dir_temp = "temp";
 $group_name = "www-data";
 try {
-    $mysql = new PDO("mysql:dbname=sourcemod;host=localhost","sourcemod","potat"); 
+    $db = new PDO($ini["db_connection"],$ini["db_username"],$ini["db_password"]); 
 }  
 catch (PDOException $e){
     echo "Error ".$e->getMessage();
     die();
 } 
 
-$file_exists_query = $mysql->prepare("SELECT COUNT(*) FROM files_registered WHERE filename = ? AND path= ?");
-$get_owner_query = $mysql->prepare("SELECT owner_steam_id FROM file_ownership WHERE name = ? AND extension = ?");
-$owner_filesize_query = $mysql->prepare("SELECT sum(filesize) FROM file_ownership WHERE owner_steam_id = ?");
-$all_filesize_query = $mysql->prepare("SELECT sum(filesize) FROM file_ownership");
-$file_count_query = $mysql->prepare("SELECT COUNT(*) FROM file_ownership WHERE owner_steam_id = ?");
-$insert_file_query = $mysql->prepare("REPLACE INTO file_ownership (name, extension, owner_steam_id, filesize) VALUES (?, ?, ?, ?)");
-$server_exists= $mysql->prepare("SELECT server_key FROM server_status WHERE server_key = ?");
-$ext_info_query = $mysql->prepare("SELECT path, prefix, suffix FROM extension_info WHERE extension = ? AND ? like CONCAT(prefix,'%') AND ? like CONCAT('%',suffix) AND path NOT LIKE ('!%') ");
-$ext_info_query_archive = $mysql->prepare("SELECT path, prefix, suffix FROM extension_info WHERE extension = ? AND ? like CONCAT(prefix,'%') AND ? like CONCAT('%',suffix)");
-$admin_info = $mysql->prepare("SELECT COUNT(*) FROM sm_admins WHERE identity LIKE ?");
+$file_exists_query = $db->prepare("SELECT COUNT(*) FROM files_registered WHERE filename = ? AND path= ?");
+$get_owner_query = $db->prepare("SELECT owner_steam_id FROM file_ownership WHERE name = ? AND extension = ?");
+$owner_filesize_query = $db->prepare("SELECT sum(filesize) FROM file_ownership WHERE owner_steam_id = ?");
+$all_filesize_query = $db->prepare("SELECT sum(filesize) FROM file_ownership");
+$file_count_query = $db->prepare("SELECT COUNT(*) FROM file_ownership WHERE owner_steam_id = ?");
+$insert_file_query = $db->prepare("REPLACE INTO file_ownership (name, extension, owner_steam_id, filesize) VALUES (?, ?, ?, ?)");
+$server_exists= $db->prepare("SELECT server_key FROM server_status WHERE server_key = ?");
+$ext_info_query = $db->prepare("SELECT path, prefix, suffix FROM extension_info WHERE extension = ? AND ? like CONCAT(prefix,'%') AND ? like CONCAT('%',suffix) AND path NOT LIKE ('!%') ");
+$ext_info_query_archive = $db->prepare("SELECT path, prefix, suffix FROM extension_info WHERE extension = ? AND ? like CONCAT(prefix,'%') AND ? like CONCAT('%',suffix)");
+$admin_info = $db->prepare("SELECT COUNT(*) FROM sm_admins WHERE identity LIKE ?");
 
 $compress_last_file=true;
 $steam_id = 0;
@@ -322,7 +324,7 @@ function recursive_load($path, $filesize_total, $current_dir)
     return $filesize_total;
 }
 function move_file_from($from,$name,$extension,$filesize,$moveuploaded, $destination_override) {
-    global $target_dir, $steam_id, $insert_file_query,$mysql,$compress_last_file, $group_name;
+    global $target_dir, $steam_id, $insert_file_query,$db,$compress_last_file, $group_name;
     if ($extension == "zip") {
         //$zip = new ZipArchive;
         //$zip->open($from);
@@ -370,7 +372,7 @@ function move_file_from($from,$name,$extension,$filesize,$moveuploaded, $destina
     $insert_file_query->bindParam(3,$steam_id,PDO::PARAM_INT);
     $insert_file_query->bindParam(4,$filesize,PDO::PARAM_INT);
 	$insert_file_query->execute();
-    $mysql->query("REPLACE INTO files_changed_timestamp () VALUES ()");
+    $db->query("REPLACE INTO files_changed_timestamp () VALUES ()");
     $compress_last_file = true;
 }
 
